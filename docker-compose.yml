@@ -1,0 +1,31 @@
+version: "3.9"  # Versión del esquema de Docker Compose. 3.9 es compatible con las últimas funciones.
+
+services:
+  mongo:
+    image: mongo  # Usa la imagen oficial de MongoDB desde Docker Hub.
+    container_name: mongo  # Nombre personalizado del contenedor MongoDB.
+    ports:
+      - "27017:27017"  # Expone el puerto estándar de MongoDB al host.
+    volumes:
+      - mongo-data:/data/db  # Crea volumen persistente para guardar datos de Mongo.
+
+  backend:
+    build: ./backend  # Construye la imagen del backend desde la carpeta ./backend.
+    ports:
+      - "5000:5000"  # Expone el puerto donde escuchará Express.
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/mydb  # Variable de entorno para la URL de conexión a MongoDB.
+    depends_on:
+      - mongo  # Este servicio no se inicia hasta que Mongo esté listo.
+
+  frontend:
+    build: ./frontend  # Construye la imagen del frontend desde la carpeta ./frontend.
+    ports:
+      - "3000:3000"  # Expone el puerto 3000, donde servirá React.
+    stdin_open: true  # Mantiene abierto STDIN, útil para entornos interactivos.
+    tty: true  # Asigna una terminal al contenedor (útil para logs y comandos).
+    depends_on:
+      - backend  # No arranca hasta que el backend esté listo.
+
+volumes:
+  mongo-data:  # Define el volumen persistente para MongoDB.
