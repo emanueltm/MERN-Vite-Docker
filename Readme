@@ -1,2 +1,4 @@
 Correr con:
 docker compose up --build
+E ir a:
+http://localhost:3000/
