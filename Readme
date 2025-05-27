@@ -1,0 +1,2 @@
+Correr con:
+docker compose up --build
